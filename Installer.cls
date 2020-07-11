@@ -6,8 +6,8 @@ XData MyInstall [ XMLNamespace = INSTALLER ]
 <Manifest>
   <Default Name="NAMESPACE" Value="OPS"/>
   <Default Name="DBNAME" Value="OPS"/>
-  <Default Name="APPPATH" Dir="/opt/app/" />
-  <Default Name="SOURCESPATH" Dir="${APPPATH}src" />
+  <Default Name="APPPATH" Dir="/ops/app/" />
+  <Default Name="SOURCESPATH" Dir="${APPPATH}" />
   <Default Name="RESOURCE" Value="%DB_${DBNAME}" /> 
 
   <Namespace Name="${NAMESPACE}" Code="${DBNAME}-CODE" Data="${DBNAME}-DATA" Create="yes" Ensemble="0">
@@ -28,4 +28,3 @@ ClassMethod setup(ByRef pVars, pLogLevel As %Integer = 3, pInstaller As %Install
 }
 
 }
-

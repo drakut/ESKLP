@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26">
+<Class name="App.MAF.PlanMetric">
+<Description>
+Связь плана сравнения и метрик</Description>
+<Super>%Persistent</Super>
+<TimeCreated>65401,43799.291707</TimeCreated>
+
+<Property name="Plan">
+<Description>
+План сравнения</Description>
+<Type>App.MAF.Plan</Type>
+</Property>
+
+<Property name="Metric">
+<Description>
+Метрика</Description>
+<Type>App.MAF.Metric</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Active">
+<Description>
+Связка активная или не активная</Description>
+<Type>%Library.Boolean</Type>
+</Property>
+
+<Property name="Weight">
+<Description>
+Вес метрики</Description>
+<Type>%Library.Double</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="UseInKeywords">
+<Description>
+Использовать результат для ключевых слов</Description>
+<Type>%Library.String</Type>
+<Parameter name="DISPLAYLIST" value=",Все значения,Самое короткое значение,Самое длинное значение,Не использовать"/>
+<Parameter name="MAXLEN" value="100"/>
+<Parameter name="VALUELIST" value=",all,shortest,longest,no"/>
+</Property>
+
+<Property name="Order">
+<Description>
+Порядок вычисления</Description>
+<Type>%Library.Integer</Type>
+</Property>
+
+<Property name="Strong">
+<Description>
+Учитывать метрику даже если значения не найдены</Description>
+<Type>%Library.Boolean</Type>
+</Property>
+
+<Index name="Active">
+<Properties>Active</Properties>
+</Index>
+
+<Parameter name="XMLTYPE">
+<Default>App-MAF-PlanMetric</Default>
+</Parameter>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DataLocation>^App.MAF.PlanMetricD</DataLocation>
+<DefaultData>PlanMetricDefaultData</DefaultData>
+<IdLocation>^App.MAF.PlanMetricD</IdLocation>
+<IndexLocation>^App.MAF.PlanMetricI</IndexLocation>
+<StreamLocation>^App.MAF.PlanMetricS</StreamLocation>
+<Data name="PlanMetricDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Plan</Value>
+</Value>
+<Value name="3">
+<Value>Metric</Value>
+</Value>
+<Value name="4">
+<Value>Active</Value>
+</Value>
+<Value name="5">
+<Value>Vers</Value>
+</Value>
+<Value name="6">
+<Value>SourceSys</Value>
+</Value>
+<Value name="7">
+<Value>GUID</Value>
+</Value>
+<Value name="8">
+<Value>Weight</Value>
+</Value>
+<Value name="9">
+<Value>UseInKeywords</Value>
+</Value>
+<Value name="10">
+<Value>Order</Value>
+</Value>
+<Value name="11">
+<Value>Strong</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

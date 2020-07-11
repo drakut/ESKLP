@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26">
+<Class name="App.MAF.Plan">
+<Description>
+План (набор метрик) сравнения строк</Description>
+<Super>%Persistent</Super>
+<TimeCreated>65394,65663.253818</TimeCreated>
+
+<Parameter name="XMLTYPE">
+<Default>App-MAF-Plan</Default>
+</Parameter>
+
+<Method name="Init">
+<Description>
+Создание одного метода по умолчанию
+d ##class(App.MAF.Plan).Init()</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	s plan = ..%New()
+	s plan.Name = "Default"
+	d plan.%Save()
+]]></Implementation>
+</Method>
+
+<Method name="ErrorDetect">
+<Description>
+Обработка ошибки</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[&exp]]></FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	s err=""
+	if exp.Code'=999{
+		d exp.Log()
+		if exp.Name["<PROTECT>" {s err="У пользователя "_$USERNAME_" нет прав на создание, изменение, удаление данных."}
+		elseif exp.%IsA("%Exception.SystemException") {s err="Ошибка : "_$ZCVT(exp.Name,"O","HTML")_". Адрес : "_exp.Location_". Код : "}
+		elseif exp.%IsA("%Exception.SQL") {s err="Ошибка SQL. Код : "}
+		elseif exp.%IsA("%Exception.StatusException") {s err="Статус : "_$SYSTEM.Status.DisplayError($SYSTEM.Status.Error(exp.Code,exp.Data)) return}
+		elseif exp.%IsA("%Exception.General") {s err="Глобальная ошибка : "_$ZCVT(exp.Name,"O","HTML")_". Код : "}
+		else {s err="Неизвестная ошибка." return}
+		//s st=$STACK($ST,"PLACE")
+		//s st="" for i=0:1:$STACK(-1) {s st=st_$STACK(i,"PLACE")_", "}
+		s:exp.Name'["<PROTECT>" err=err_exp.Code_". Строка : "_exp.Data //_". Стек : <br>"_st
+	}
+	else{s err=exp.Data}
+	q err
+]]></Implementation>
+</Method>
+
+<Method name="UpdateMetricsWeights">
+<Description>
+d ##class(App.MAF.Plan).UpdateMetricsWeights(1,arr,0.1,84)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>planId,arrCoef,numIntercept,numScore</FormalSpec>
+<Implementation><![CDATA[
+	try {
+		s planId = $G(planId, "")
+		s plan = ##class(App.MAF.Plan).%OpenId(planId)
+		i '$ISO(plan) {
+			s status = $$$ERROR("No plan with id:"_palnId)
+			q
+		}
+		
+		s plan.Intercept = numIntercept
+		s plan.Score = numScore
+		s status = plan.%Save() q:$$$ISERR(status)
+		
+		s:'$ISO(arrCoef) arrCoef = [].%FromJSON(arrCoef)
+		s query = 	"SELECT m.id AS metricId, "_
+					"	link.id AS linkId, "_
+					"	link.Order AS Ord "_
+					"FROM App_MAF.Plan plan "_
+					"LEFT JOIN app_maf.PlanMetric link ON plan.id = link.plan "_
+					"RIGHT JOIN app_maf.Metric m ON link.Metric = m.id "_
+					"WHERE plan.id = "_planId_
+					" AND link.active = 1 "_
+					" ORDER BY Ord"
+		s statement	= ##class(%SQL.Statement).%New()
+		s statement.%SelectMode = 1
+		s status = statement.%Prepare(query) q:$$$ISERR(status)
+		s resultSet = statement.%Execute() q:$$$ISERR(status)
+		while resultSet.%Next() {
+			s weight = 1
+			s metricId = resultSet.%Get("metricId")
+			s linkId = resultSet.%Get("linkId")
+			s metric = ##class(App.MAF.Metric).%OpenId(metricId)
+			s link = ##class(App.MAF.PlanMetric).%OpenId(linkId)
+			
+			s:metric.Name="Country" weight=arrCoef.%Get(0)
+			s:metric.Name="Decimal" weight=arrCoef.%Get(1)
+			s:metric.Name="LekForm" weight=arrCoef.%Get(2)
+			s:metric.Name="ManufName" weight=arrCoef.%Get(3)
+			s:metric.Name="N-gramm" weight=arrCoef.%Get(4)
+			s:metric.Name="Nomer" weight=arrCoef.%Get(5)
+			s:metric.Name="ProdName" weight=arrCoef.%Get(6)
+			s:metric.Name="Simber" weight=arrCoef.%Get(7)
+			s:metric.Name="Translit" weight=arrCoef.%Get(8)
+			s:metric.Name="Trigram" weight=arrCoef.%Get(9)
+			s weight = weight/100
+			
+			s link.Weight = weight
+			s status = link.%Save()
+			q:$$$ISERR(status)
+		}
+	}
+	catch exp {
+		s err = ..ErrorDetect(.exp)
+		s status = $$$ERROR(err)
+	}
+	q status
+]]></Implementation>
+</Method>
+
+<Method name="ResetMetricsWeights">
+<Description>
+d ##class(App.MAF.Plan).ResetMetricsWeights(1)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>planId</FormalSpec>
+<Implementation><![CDATA[
+	try {
+		s planId = $G(planId, "")
+		s plan = ##class(App.MAF.Plan).%OpenId(planId)
+		i '$ISO(plan) {
+			s status = $$$ERROR("No plan with id:"_palnId)
+			q
+		}
+		
+		s query = 	"SELECT m.id AS metricId, "_
+					"	link.id AS linkId, "_
+					"	link.Order AS Ord "_
+					"FROM App_MAF.Plan plan "_
+					"LEFT JOIN app_maf.PlanMetric link ON plan.id = link.plan "_
+					"LEFT JOIN app_maf.Metric m ON link.Metric = m.id "_
+					"WHERE plan.id = "_planId_
+					" AND link.active = 1 "_
+					" ORDER BY Ord"
+		s statement	= ##class(%SQL.Statement).%New()
+		s statement.%SelectMode = 1
+		s status = statement.%Prepare(query) q:$$$ISERR(status)
+		s resultSet = statement.%Execute() q:$$$ISERR(status)
+		while resultSet.%Next() {
+			s weight = 1
+			
+			s linkId = resultSet.%Get("linkId")
+			s link = ##class(App.MAF.PlanMetric).%OpenId(linkId)
+			
+			s link.Weight = weight
+			s status = link.%Save()
+
+			q:$$$ISERR(status)
+		}
+	}
+	catch exp {
+		s err = ..ErrorDetect(.exp)
+		s status = $$$ERROR(err)
+	}
+	q status
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DataLocation>^App.MAF.PlanD</DataLocation>
+<DefaultData>PlanDefaultData</DefaultData>
+<IdLocation>^App.MAF.PlanD</IdLocation>
+<IndexLocation>^App.MAF.PlanI</IndexLocation>
+<StreamLocation>^App.MAF.PlanS</StreamLocation>
+<Data name="PlanDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Description</Value>
+</Value>
+<Value name="3">
+<Value>Intercept</Value>
+</Value>
+<Value name="4">
+<Value>MinCoef</Value>
+</Value>
+<Value name="5">
+<Value>Name</Value>
+</Value>
+<Value name="6">
+<Value>Score</Value>
+</Value>
+</Data>
+</Storage>
+
+<Property name="Description">
+<Description>
+Описание</Description>
+<Type>%Library.String</Type>
+<Parameter name="MAXLEN" value="30000"/>
+</Property>
+
+<Property name="Intercept">
+<Description>
+Интерсепт</Description>
+<Type>%Library.Double</Type>
+</Property>
+
+<Property name="MinCoef">
+<Description>
+Минимальный коэффициент для автоматического связывания</Description>
+<Type>%Library.Double</Type>
+</Property>
+
+<Property name="Name">
+<Description>
+Наименование </Description>
+<Type>%Library.String</Type>
+<Parameter name="MAXLEN" value="1024"/>
+</Property>
+
+<Property name="Score">
+<Description>
+Точность модели</Description>
+<Type>%Library.Double</Type>
+</Property>
+
+<Index name="Name">
+<Type>bitmap</Type>
+<Properties>Name:Truncate(200)</Properties>
+</Index>
+</Class>
+</Export>

@@ -1,11 +1,8 @@
 Application demonstrates using Python and Intersystems IRIS to resolve linear regression in task of checking similarity of two text strings
 
 
-text-similarity dictionaries linear regression python
-
-
 Input data:
-Link table (all candidates for all positions of resource rows) App_MAF.LinkML, contain 2 codes from some organization nomeclature dictionary and ESKLP (federal single structured reference directory of drugs in Russia) and some information about these pair, such as full-coefficient value and each of metrics-coefficients values of two strings similarity. Every link marked by human - if this link right or not.
+Link table (all candidates for all positions of resource dictionary) App_MAF.LinkML, contain 2 codes from some organization nomeclature dictionary and ESKLP-code (federal single structured reference directory of drugs in Russia) and some information about these pair, such as full-coefficient value and each of metrics-coefficients values of two strings similarity. Every link marked by human - if this link right or not.
 
 Metrics: 
 Country   - similarity of Country,

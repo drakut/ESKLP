@@ -1,8 +1,12 @@
 ; run installer to create namespace
-do $SYSTEM.OBJ.Load("/opt/ops/Installer.cls", "ck")
-set sc = ##class(App.Installer).setup() 
+; do $SYSTEM.OBJ.Load("/opt/ops/Installer.cls", "ck")
 
-zn "OPS"
-zpm "install webterminal"
+zn "PYTHON"
+do $SYSTEM.OBJ.LoadDir("/opt/ops/src/", "ck",,1)
+
+;set sc = ##class(App.Installer).setup() 
+
+;zn "OPS"
+;zpm "install webterminal"
 
 halt

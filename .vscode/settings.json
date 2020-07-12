@@ -19,6 +19,11 @@
         
     }
     },
-    "objectscript.conn.active": true
+    "objectscript.conn.active": true,
+    "objectscript.conn.docker-compose": {
+      "service": "",
+      "internalPort": 52773,
+      "file": "docker-compose.yml"
+    }
 
 }

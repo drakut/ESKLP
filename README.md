@@ -1,4 +1,4 @@
-Application demonstrates using Python from Intersystems IRIS to resolve linear regression in task of checking similarity of two text strings
+Application demonstrates using Python and Intersystems IRIS to resolve linear regression in task of checking similarity of two text strings
 
 
 text-similarity dictionaries linear regression python

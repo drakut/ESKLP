@@ -1,42 +1,100 @@
-Application demonstrates using Python and InterSystems IRIS to resolve linear regression in task of checking similarity of two text strings
+Application demonstrates using Python and InterSystems IRIS to resolve
+linear regression in task of checking similarity of two text strings.
 
+**Problem**: To get an analogue of directory B for the nomenclature of
+directory A automatically. For example, price list of some pharmacy
+company and some dictionary, Like ESKLP (federal single structured
+reference directory of drugs in Russia).
 
-Input data:
-Link table (all candidates for all positions of resource dictionary) App_MAF.LinkML, contain 2 codes from some organization nomeclature dictionary and ESKLP-code (federal single structured reference directory of drugs in Russia) and some information about these pair, such as full-coefficient value and each of metrics-coefficients values of two strings similarity. Every link marked by human - if this link right or not.
+This example is available at https://paramon.esc.ru/csp/maf/index.html
+in guest mode (Choose: Инструменты / Распознавание )
 
-Metrics: 
-Country   - similarity of Country; 
-Decimal   - similarity of two number list, especially prepared; 
-LekForm   - similarity of dosage form, especially prepared; 
-ManufName - similarity of manufacturer's name; 
-Ngramm	  - similarity of two strings by n-gramm method; 
-Nomer     - similaruty of tablet's count in pack; 
-ProdName  - similaruty of production name; 
-Simber    - similarity of two number list, especially prepared; 
-Translit  - similarity of two strings in translit; 
-Trigram   - similarity of two strings in translit by n-gramm method; 
+![](media/image1.png){width="6.496527777777778in"
+height="5.045138888888889in"}
 
-So we need to get weights of all metrics, because some of them are not so effective to make our choice: if string from our organisation's dictionary and string from ESKLP are the same or not. And when we will compare another organisation's nomenclature, there wil be much less error.
+**Input data**:
 
-1) Reset coefficients (IRIS-Management Portal:  System > SQL)
-update App_maf.PlanMetric set weight=1
+1.  Price list (left part on screen),
 
-2) Start production: ( Interoperability > Production Configuration)
+2.  Some dictionary (ESKLP for example)
 
+3.  Sorted by similarity candidates from ESKLP for every string from
+    price list: many candidates to one position from price list.
 
-3) Get result, colunm weight: (IRIS-Management Portal:  System > SQL)
+4.  Information about every pair "Price list -- candidate ESKLP"
 
-SELECT 
-  m.id AS metricId, 
-  link.weight,
-  link.id AS linkId, 
-  link.Order AS Ord 
-FROM 
-  App_MAF.Plan plan 
-  LEFT JOIN app_maf.PlanMetric link ON plan.id = link.plan 
-  RIGHT JOIN app_maf.Metric m ON link.Metric = m.id 
-WHERE 
-  plan.id = 1
-  AND link.active = 1 
-ORDER BY 
-  Ord
+Similarity is a classic linear regression function, where we calculate
+metrics values from two strings, and if the full value of function is
+the same more, then minimum we want -- then we can say that positions
+are the same.
+
+Metrics:
+
+1.  Country - similarity of Country;
+
+2.  Decimal - similarity of two number list, especially prepared;
+
+3.  LekForm - similarity of dosage form, especially prepared;
+
+4.  ManufName - similarity of manufacturer\'s name;
+
+5.  Ngramm - similarity of two strings by n-gramm method;
+
+6.  Nomer - similarity of tablet\'s count in pack;
+
+7.  ProdName - similarity of production name;
+
+8.  Simber - similarity of two number list, especially prepared;
+
+9.  Translit - similarity of two strings in translit;
+
+10. Trigram - similarity of two strings in translit by n-gramm method;
+
+Some of these metrics getting-values-methods are shown in
+App.MAF.Metric.
+
+Information about every pair: is collected in App_MAF.LinkML, it
+contains:
+
+1.  Code from organization's nomenclature dictionary
+
+2.  ESKLP-code (federal single structured reference directory of drugs
+    in Russia)
+
+3.  Similarity value
+
+4.  Each of metric values.
+
+5.  Every link marked by human - if this link right or not.
+
+At start all weights of all metrics = 1. And for example from print
+screen (code = 3045_1 )the final value of candidates are 96.38 and 95.5.
+The second candidate (95.5) is wrong, but the difference is not very
+big.
+
+**Solution**
+
+Get weights of all metrics, because some of them are not so effective to
+make our choice: if string from our organization's dictionary and string
+from ESKLP are the same or not. And when we will compare another
+organization's nomenclature, there will be much less error.
+
+1.  Reset coefficients (IRIS-Management Portal: System \> SQL) update
+    App_maf.PlanMetric set weight=1
+
+2.  Start production: ( Interoperability \> Configure \> Production
+    Configuration \> Category: Match)\
+    ml.match.RgrCoefProcess -\>Start button
+
+3.  Test Production: ml.match.RgrCoefProcess \> Actions \> Test button
+
+4.  Get result, see column "weight": (IRIS-Management Portal: System \>
+    SQL)
+
+SELECT m.id AS metricId, link.weight, link.id AS linkId, link.Order AS
+Ord FROM App_MAF.Plan plan LEFT JOIN app_maf.PlanMetric link ON plan.id
+= link.plan RIGHT JOIN app_maf.Metric m ON link.Metric = m.id WHERE
+plan.id = 1 AND link.active = 1 ORDER BY Ord
+
+After updating weights we could see another values of similarity
+function. (Choose Plan **Лексредства V2** in Options)

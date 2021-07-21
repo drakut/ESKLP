@@ -5,6 +5,8 @@
         "iris.script": "objectscript"
       },
     "objectscript.conn" :{
+      "username": "_SYSTEM",
+      "password": "SYS",
       "ns": "OPS",
       "active": true,
       "docker-compose": {
@@ -15,15 +17,8 @@
         "DSW": "http://localhost:${port}/dsw/index.html#!/?ns=IRISAPP",
         "Dashboards Portal": "http://localhost:${port}/csp/irisapp/_DeepSee.UserPortal.Home.zen",
         "Analyzer": "http://localhost:${port}/csp/irisapp/_DeepSee.UserPortal.Analyzer.zen",
-        "Architect":"http://localhost:${port}/csp/irisapp/_DeepSee.UI.Architect.zen?$NAMESPACE=IRISAPP"
-        
-    }
-    },
-    "objectscript.conn.active": true,
-    "objectscript.conn.docker-compose": {
-      "service": "",
-      "internalPort": 52773,
-      "file": "docker-compose.yml"
+        "Architect": "http://localhost:${port}/csp/irisapp/_DeepSee.UI.Architect.zen?$NAMESPACE=IRISAPP"
+      }
     }
 
 }

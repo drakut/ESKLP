@@ -137,7 +137,7 @@ ClassMethod SimpleSimula(source, word, params, out)
 /// Выход:
 /// 	-1, 0, 1	
 /// w ##class(App.MAF.Metric).BarcodeSimilarity(12345678, 12345678)
-ClassMethod BarcodeSimilarity(str1 = "", str2 = "", params, out)
+ClassMethod BarcodeSimilarity(str1 = "", str2 = "")
 {
 	s barcode1 = ""
 	s matcher = ##class(%Regex.Matcher).%New("(\d{13}|\d{8})", str1)

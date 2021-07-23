@@ -99,7 +99,7 @@ Ord FROM App_MAF.Plan plan LEFT JOIN app_maf.PlanMetric link ON plan.id
 = link.plan RIGHT JOIN app_maf.Metric m ON link.Metric = m.id WHERE
 plan.id = 1 AND link.active = 1 ORDER BY Ord
 
-Now we have anover values of weight for every metric. Why it's good: one metric began to express the similarity of strings more than another, and we could see another values of similarity function for different types of goods. For example - barcode for computer goods is less important, than for medicaments, and weight for BarcodeSimilarity metric when checking computer goods must be less then value for it's metric, when we check similarity of two strings containig description of another goods.
+Now we have anover values of weight for every metric. Why it's good: one metric began to express the similarity of strings more than another, and we could see another values of similarity function for different types of goods. For example - barcode for computer goods is less important, than for medicaments, and weight for BarcodeSimilarity metric when checking computer goods must be less then value for it's metric, when we check similarity of two strings containig description of medicaments goods.
 So, we could save different plans of checking similarity for different types of goods.
 
 

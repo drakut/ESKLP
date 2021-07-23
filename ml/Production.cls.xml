@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26">
+<Class name="ml.Production">
+<Super>Ens.Production</Super>
+<TimeCreated>65467,59974.651883</TimeCreated>
+
+<Method name="OnStart">
+<Description>
+Register callout lib system-wide</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pTimeStarted:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set sc = ##class(isc.py.Callout).Setup()
+	quit sc
+]]></Implementation>
+</Method>
+
+<XData name="ProductionDefinition">
+<Data><![CDATA[
+<Production Name="ml.Production" TestingEnabled="true" LogGeneralTraceEvents="true">
+  <Description></Description>
+  <ActorPoolSize>2</ActorPoolSize>
+  <Item Name="ml.match.RgrCoefProcess" Category="Match" ClassName="ml.match.RgrCoefProcess" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
+  </Item>
+  <Item Name="isc.py.ens.Operation" Category="Engine,Match" ClassName="isc.py.ens.Operation" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
+    <Setting Target="Host" Name="PythonLib">libpython3.6m.so</Setting>
+  </Item>
+</Production>
+]]></Data>
+</XData>
+</Class>
+</Export>

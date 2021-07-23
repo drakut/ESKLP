@@ -79,6 +79,7 @@ ClassMethod UpdateMetricsWeights(planId, arrCoef, numIntercept, numScore)
 			s:metric.Name="Simber" weight=arrCoef.%Get(7)
 			s:metric.Name="Translit" weight=arrCoef.%Get(8)
 			s:metric.Name="Trigram" weight=arrCoef.%Get(9)
+			s:metric.Name="BarcodeSimilarity" weight=arrCoef.%Get(10) 
 			s weight = weight/100
 			
 			s link.Weight = weight
@@ -184,4 +185,3 @@ Property Score As %Library.Double;
 Index Name On Name As Truncate(200) [ Type = bitmap ];
 
 }
-

@@ -42,6 +42,8 @@ Property LekForm As %Library.Double;
 
 Property Country As %Library.Double;
 
+Property BarcodeSimilarity As %Library.Double;
+
 Index CodeLeft On CodeLeft As Truncate(200) [ Type = bitmap ];
 
 Index CodeRight On CodeRight As Truncate(200) [ Type = bitmap ];
@@ -113,6 +115,9 @@ Storage Default
 <Value name="18">
 <Value>Country</Value>
 </Value>
+<Value name="19">
+<Value>BarcodeSimilarity</Value>
+</Value>
 </Data>
 <DataLocation>^App.MAF.LinkMLD</DataLocation>
 <DefaultData>LinkMLDefaultData</DefaultData>
@@ -123,4 +128,3 @@ Storage Default
 }
 
 }
-

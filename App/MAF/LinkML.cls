@@ -115,9 +115,6 @@ Storage Default
 <Value name="18">
 <Value>Country</Value>
 </Value>
-<Value name="19">
-<Value>BarcodeSimilarity</Value>
-</Value>
 </Data>
 <DataLocation>^App.MAF.LinkMLD</DataLocation>
 <DefaultData>LinkMLDefaultData</DefaultData>

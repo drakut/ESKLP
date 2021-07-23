@@ -102,5 +102,10 @@ plan.id = 1 AND link.active = 1 ORDER BY Ord
 Now we have anover values of weight for every metric. Why it's good: one metric began to express the similarity of strings more than another, and we could see another values of similarity function for different types of goods. For example - barcode for computer goods is less important, than for medicaments, and weight for BarcodeSimilarity metric when checking computer goods must be less then value for it's metric, when we check similarity of two strings containig description of medicaments goods.
 So, we could save different plans of checking similarity for different types of goods.
 
-
-(In web-example Choose Plan **Лексредства V2** in Options)
+**Working with web-application (code of web-application is not presented in this repository yet)**
+1. Go to https://paramon.esc.ru/csp/maf/index.html, press Guest mode;
+2. Open in menu «Распознавание прайсов» (Меню : / Инструменты / Распознавание);
+3. Filter positions by choosing Contragent by code "FE";
+4. Press button "Настройки";
+5. Choose Check-Plan **Лексредства V2**, choose "App.SPR.ESCLP" as source for analogs. Do not choose contragent in this options. Press OK;
+6. You could see nomenclature of organisation in left table and analogs for every position in right table with value of resul coefficienе, which means how two positions are similar.

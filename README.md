@@ -50,7 +50,7 @@ Metrics:
 
 10. Trigram - similarity of two strings in translit by n-gramm method;
 
-11. BarcodeSimilarity (new) - similarity of two strings that contain (o not) barcodes$
+11. BarcodeSimilarity (new) - similarity of two strings that contain (o not) barcodes
 
 Some of these metrics getting-values-methods are shown in
 App.MAF.Metric.

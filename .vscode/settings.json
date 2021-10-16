@@ -5,14 +5,12 @@
         "iris.script": "objectscript"
       },
     "objectscript.conn" :{
+      "host": "localhost",
+      "port": 52773,
       "username": "_SYSTEM",
       "password": "SYS",
       "ns": "OPS",
       "active": true,
-      "docker-compose": {
-        "service": "iris",
-        "internalPort": 52773
-      },
       "links": {
         "DSW": "http://localhost:${port}/dsw/index.html#!/?ns=IRISAPP",
         "Dashboards Portal": "http://localhost:${port}/csp/irisapp/_DeepSee.UserPortal.Home.zen",

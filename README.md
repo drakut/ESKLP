@@ -1,5 +1,5 @@
 Application demonstrates using Python and InterSystems IRIS to resolve
-linear regression in task of checking similarity of two text strings.
+linear regression in task of checking similarity of two text strings. Strings contain descriptions of some goods.
 
 **Problem**: To get an analogue of directory B for the nomenclature of
 directory A automatically. For example, price list of some pharmacy
@@ -50,6 +50,8 @@ Metrics:
 
 10. Trigram - similarity of two strings in translit by n-gramm method;
 
+11. BarcodeSimilarity (new) - similarity of two strings that contain (o not) barcodes
+
 Some of these metrics getting-values-methods are shown in
 App.MAF.Metric.
 
@@ -79,8 +81,7 @@ make our choice: if string from our organization's dictionary and string
 from ESKLP are the same or not. And when we will compare another
 organization's nomenclature, there will be much less error.
 
-1.  Reset coefficients (IRIS-Management Portal: System \> SQL) update
-    App_maf.PlanMetric set weight=1
+1.  Reset coefficients: in terminal d ##class(App.MAF.Plan).ResetMetricsWeights(1)
 
 2.  Start production: ( Interoperability \> Configure \> Production
     Configuration \> Category: Match)\
@@ -88,7 +89,9 @@ organization's nomenclature, there will be much less error.
 
 3.  Test Production: ml.match.RgrCoefProcess \> Actions \> Test button
 
-4.  Get result, see column "weight": (IRIS-Management Portal: System \>
+4.  Choose "Ens.Request" in Request Type and press button "Invoke Testing Service". Please wait for finish.
+
+5.  Get result, see column "weight": (IRIS-Management Portal: System \>
     SQL)
 
 SELECT m.id AS metricId, link.weight, link.id AS linkId, link.Order AS
@@ -96,5 +99,13 @@ Ord FROM App_MAF.Plan plan LEFT JOIN app_maf.PlanMetric link ON plan.id
 = link.plan RIGHT JOIN app_maf.Metric m ON link.Metric = m.id WHERE
 plan.id = 1 AND link.active = 1 ORDER BY Ord
 
-After updating weights we could see another values of similarity
-function. (Choose Plan **Лексредства V2** in Options)
+Now we have anover values of weight for every metric. Why it's good: one metric began to express the similarity of strings more than another, and we could see another values of similarity function for different types of goods. For example - barcode for computer goods is less important, than for medicaments, and weight for BarcodeSimilarity metric when checking computer goods must be less then value for it's metric, when we check similarity of two strings containig description of medicaments goods.
+So, we could save different plans of checking similarity for different types of goods.
+
+**Working with web-application (code of web-application is not presented in this repository yet)**
+1. Go to https://paramon.esc.ru/csp/maf/index.html, press Guest mode;
+2. Open in menu «Распознавание прайсов» (Меню : / Инструменты / Распознавание);
+3. Filter positions by choosing Contragent by code "FE";
+4. Press button "Настройки";
+5. Choose Check-Plan **Лексредства V2**, choose "App.SPR.ESCLP" as source for analogs. Do not choose contragent in this options. Press OK;
+6. You could see nomenclature of organisation in left table and analogs for every position in right table with value of resul coefficienе, which means how two positions are similar.

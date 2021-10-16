@@ -33,6 +33,39 @@ ClassMethod ErrorDetect(ByRef exp) As %String
 	q err
 }
 
+/// d ##class(App.MAF.Plan).PrintResults(1,arr,0.1,84)
+ClassMethod PrintResults(planId, numScore, predictions, cm)
+{
+	try {
+		s status = $$$OK
+		s query = 	"SELECT ID FROM App_MAF.LinkML ORDER BY ID"
+		s statement	= ##class(%SQL.Statement).%New()
+		s statement.%SelectMode = 1
+		s status = statement.%Prepare(query) q:$$$ISERR(status)
+		s resultSet = statement.%Execute() q:$$$ISERR(status)
+		s predictions = [].%FromJSON(predictions)
+		
+		s predictionNum = 0
+		while resultSet.%Next() {
+			s linkId = resultSet.%Get("ID")
+			s link = ##Class(App.MAF.LinkML).%OpenId(linkId)
+			s prediction = predictions.%Get(predictionNum)
+			s link.LinkedLogReg = prediction
+			s st = link.%Save()
+			i $I(predictionNum)
+		}
+		s ^kam($I(^kam), "planId") 		= planId
+		s ^kam($I(^kam), "numScore") 	= numScore
+		s ^kam($I(^kam), "cm") 			= cm
+		
+	}
+	catch exp {
+		s err = ..ErrorDetect(.exp)
+		s ^kam($I(^kam), "err") = err
+	}
+	q status
+}
+
 /// d ##class(App.MAF.Plan).UpdateMetricsWeights(1,arr,0.1,84)
 ClassMethod UpdateMetricsWeights(planId, arrCoef, numIntercept, numScore)
 {

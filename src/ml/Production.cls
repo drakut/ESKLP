@@ -4,7 +4,7 @@ Class ml.Production Extends Ens.Production
 /// Register callout lib system-wide
 ClassMethod OnStart(pTimeStarted As %String) As %Status
 {
-	set sc = ##class(isc.py.Callout).Setup()
+	set sc = ##class(isc.py.Callout).Setup() 
 	quit sc
 }
 

@@ -1,4 +1,4 @@
-/// Using Python to get logistic regression coefficients
+/// Using Python to get linear regression coefficients
 Class ml.match.RgrCoefProcess Extends (Ens.BusinessProcessBPL, isc.py.ens.ProcessUtils)
 {
 

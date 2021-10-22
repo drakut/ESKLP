@@ -3,7 +3,6 @@ services:
   iris:
     build: .
     restart: always
-    init: true
     ports:
       - 52773
     volumes:

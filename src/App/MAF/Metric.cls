@@ -296,3 +296,4 @@ Index Description On Description As Truncate(200) [ Type = bitmap ];
 Index Name On Name As Truncate(200) [ Type = bitmap ];
 
 }
+

@@ -22,6 +22,9 @@ Property Mark As %Library.String(DISPLAYLIST = ",верно,исправлено
 /// План (метод), по которому проводилось сравнение
 Property Plan As App.MAF.Plan [ Required ];
 
+/// Признак установленной связи для номенклатуры и аналога на основе логистической регрессии
+Property LinkedLogReg As %Library.Boolean;
+
 Property Simber As %Library.Double;
 
 Property Ngramm As %Library.Double;

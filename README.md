@@ -102,6 +102,14 @@ plan.id = 1 AND link.active = 1 ORDER BY Ord
 Now we have anover values of weight for every metric. Why it's good: one metric began to express the similarity of strings more than another, and we could see another values of similarity function for different types of goods. For example - barcode for computer goods is less important, than for medicaments, and weight for BarcodeSimilarity metric when checking computer goods must be less then value for it's metric, when we check similarity of two strings containig description of medicaments goods.
 So, we could save different plans of checking similarity for different types of goods.
 
+
+In the new version added calculation of logistic regression to compare with linear regression model. How it works:
+1. At first we train our model on marked data;
+2. Then we send to trianed model the same data and save result for every pair of strings in new-created field "LinkedLogReg" of "App.MAF.LinkML"-class. So 1 - the nomeclatue? described in pair of string is the same, and 0 - not.
+
+We could see big difference between precisions of linear regression model and logistic regression model.
+
+
 **Working with web-application (code of web-application is not presented in this repository yet)**
 1. Go to https://paramon.esc.ru/csp/maf/index.html, press Guest mode;
 2. Open in menu «Распознавание прайсов» (Меню : / Инструменты / Распознавание);

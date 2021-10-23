@@ -105,7 +105,8 @@ So, we could save different plans of checking similarity for different types of 
 
 In the new version added calculation of logistic regression to compare with linear regression model. How it works:
 1. At first we train our model on marked data;
-2. Then we send to trianed model the same data and save result for every pair of strings in new-created field "LinkedLogReg" of "App.MAF.LinkML"-class. So 1 - the nomeclatue? described in pair of string is the same, and 0 - not.
+2. Then we send the same data to trained model;
+3. Get and save result (1 - the same goods, or 0 - different goods described in 2 strings) for every pair of strings in new-created field "LinkedLogReg" of "App.MAF.LinkML"-class.
 
 We could see big difference between precisions of linear regression model and logistic regression model.
 

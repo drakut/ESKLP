@@ -1,0 +1,215 @@
+Cache for Windows^INC^routine output by %apiRTN^^~Format=Cache.S~^UTF8
+%RO on 21 Дек 2016 05:44:05PM
+caIndDef^INC^^62749,34966^0
+ #ifndef caIndFunc
+   #define caIndFunc "COUNT,AND,AND2,OR,OR2,SUB,SUB2,INSERT,DELETE,MEMBER,GETRECS,GETRECNUM,FORIDS,ONEID"
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",COUNT,"
+   #define COUNT(%caIN)                  $$caIndCount($na(%caIN))
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",AND,"
+   #define AND(%caOUT,%caIN1,%caIN2)     d caIndAND($na(%caOUT),$na(%caIN1),$na(%caIN2))
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",AND2,"
+   #define AND2(%caINOUT1,%caIN2)        d caIndAND2($na(%caINOUT1),$na(%caIN2))
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",OR,"
+   #define OR(%caOUT,%caIN1,%caIN2)      d caIndOR($na(%caOUT),$na(%caIN1),$na(%caIN2))
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",OR2,"
+   #define OR2(%caINOUT1,%caIN2)         d caIndOR2($na(%caINOUT1),$na(%caIN2))
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",SUB,"
+   #define SUB(%caOUT,%caIN1,%caIN2)     d caIndSUB($na(%caOUT),$na(%caIN1),$na(%caIN2))
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",SUB2,"
+   #define SUB2(%caINOUT1,%caIN2)        d caIndSUB2($na(%caINOUT1),$na(%caIN2))
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",INSERT,"
+   #define INSERT(%caINOUT,%caREC)       d caIndInsert($na(%caINOUT),%caREC)
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",DELETE,"
+   #define DELETE(%caINOUT,%caREC)       d caIndDelete($na(%caINOUT),%caREC)
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",MEMBER,"
+   #define MEMBER(%caIN,%caREC)          $$caIndMember($na(%caIN),%caREC)
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",GETRECS,"
+   #define GETRECS(%caIN,%caFROM,%caNUM) $$caIndGetRecs($na(%caIN),%caFROM,%caNUM)
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",GETRECNUM,"
+   #define GETRECNUM(%caIN,%caID) $$caIndGetNum($na(%caIN),%caID)
+ #endif         
+ 
+  #if ","_$$$caIndFunc_","[",FORIDS,"
+   #define FORIDS(%rez,%id,%k,%j,%recs) n %k,%j,%recs s %k=0 f  s %recs=$$$GETRECS(%rez,%k,2048) q:%recs=""  f %j=1:4:$l(%recs) s %k=%k+1,%id=$zla(%recs,%j)
+ #endif
+ 
+ #if ","_$$$caIndFunc_","[",ONEID,"
+   #define ONEID(%rez) $zla($$$GETRECS(%rez,-1,2048),1)
+ #endif
+
+caIndFunc^INC^^63342,53986.440147^0
+ #;------------------------------------------
+ #;                                         |
+ #;  CAESAR Index Manipulation Subroutines  |
+ #;                                         |
+ #;------------------------------------------
+  
+ #ifndef caIndFunc
+   #define caIndFunc "COUNT,AND,AND2,OR,OR2,SUB,SUB2,INSERT,DELETE,MEMBER,GETRECS,GETRECNUM,FORIDS,ONEID"
+ #endif
+  
+ ; Переключатель Windows <-> Linux
+ #if $zv["Windows"
+   #define caLIB "ca.dll"
+ #else
+   #define caLIB "ca.so"
+ #endif
+ 
+ #if ","_$$$caIndFunc_","[",COUNT,"
+caIndCount(%caIN) 
+ n %caS,%caN
+ s %caN=0,%caS="" f  s %caS=$o(@%caIN@(%caS)) q:%caS=""  s %caN=%caN+$zf(-3,$$$caLIB,"caIndCount",0,@%caIN@(%caS))
+ q %caN
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",AND,"
+caIndAND(%caOUT,%caIN1,%caIN2) 
+ n %caS1,%caS2,%caZ
+ k @%caOUT
+ s %caS1=$o(@%caIN1@("")),%caS2=$o(@%caIN2@("")) f  q:%caS1=""!(%caS2="")  d
+ .i %caS1<%caS2 s %caS1=$o(@%caIN1@(%caS1)) q
+ .i %caS2<%caS1 s %caS2=$o(@%caIN2@(%caS2)) q
+ .s %caZ=$zf(-3,$$$caLIB,"caIndAND",0,@%caIN1@(%caS1),@%caIN2@(%caS2))
+ .i %caZ'="" s @%caOUT@(%caS1)=%caZ
+ .s %caS1=$o(@%caIN1@(%caS1)),%caS2=$o(@%caIN2@(%caS2))
+ q
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",AND2,"
+caIndAND2(%caINOUT1,%caIN2) 
+ n %caS1,%caS2,%caZ
+ s %caS1=$o(@%caINOUT1@("")),%caS2=$o(@%caIN2@("")) f  q:%caS1=""  d
+ .i %caS2=""!(%caS1<%caS2) k @%caINOUT1@(%caS1) s %caS1=$o(@%caINOUT1@(%caS1)) q
+ .i %caS2<%caS1 s %caS2=$o(@%caIN2@(%caS2)) q
+ .s %caZ=$zf(-3,$$$caLIB,"caIndAND",0,@%caINOUT1@(%caS1),@%caIN2@(%caS2))
+ .i %caZ'="" s @%caINOUT1@(%caS1)=%caZ
+ .e  k @%caINOUT1@(%caS1)
+ .s %caS1=$o(@%caINOUT1@(%caS1)),%caS2=$o(@%caIN2@(%caS2))
+ q
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",OR,"
+caIndOR(%caOUT,%caIN1,%caIN2) 
+ n %caS1,%caS2,%caZ
+ k @%caOUT
+ s %caS1=$o(@%caIN1@("")),%caS2=$o(@%caIN2@("")) f  q:%caS1=""&(%caS2="")  d
+ .i %caS1'="",%caS2=""!(%caS1<%caS2) s @%caOUT@(%caS1)=@%caIN1@(%caS1),%caS1=$o(@%caIN1@(%caS1)) q
+ .i %caS1=""!(%caS2<%caS1) s @%caOUT@(%caS2)=@%caIN2@(%caS2),%caS2=$o(@%caIN2@(%caS2)) q
+ .s %caZ=$zf(-3,$$$caLIB,"caIndOR",0,@%caIN1@(%caS1),@%caIN2@(%caS2))
+ .i %caZ'="" s @%caOUT@(%caS1)=%caZ
+ .s %caS1=$o(@%caIN1@(%caS1)),%caS2=$o(@%caIN2@(%caS2))
+ q
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",OR2,"
+caIndOR2(%caINOUT1,%caIN2) 
+ n %caS1,%caS2,%caZ
+ s %caS1=$o(@%caINOUT1@("")),%caS2=$o(@%caIN2@("")) f  q:%caS2=""  d
+ .i %caS1'="",%caS1<%caS2 s %caS1=$o(@%caINOUT1@(%caS1)) q
+ .i %caS1=""!(%caS2<%caS1) s @%caINOUT1@(%caS2)=@%caIN2@(%caS2),%caS2=$o(@%caIN2@(%caS2)) q
+ .s %caZ=$zf(-3,$$$caLIB,"caIndOR",0,@%caINOUT1@(%caS1),@%caIN2@(%caS2))
+ .i %caZ'="" s @%caINOUT1@(%caS1)=%caZ
+ .e  k @%caINOUT1@(%caS1)
+ .s %caS1=$o(@%caINOUT1@(%caS1)),%caS2=$o(@%caIN2@(%caS2))
+ q
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",SUB,"
+caIndSUB(%caOUT,%caIN1,%caIN2) 
+ n %caS1,%caS2,%caZ
+ k @%caOUT
+ s %caS1=$o(@%caIN1@("")),%caS2=$o(@%caIN2@("")) f  q:%caS1=""  d
+ .i %caS2=""!(%caS1<%caS2) s @%caOUT@(%caS1)=@%caIN1@(%caS1),%caS1=$o(@%caIN1@(%caS1)) q
+ .i %caS2<%caS1 s %caS2=$o(@%caIN2@(%caS2)) q
+ .s %caZ=$zf(-3,$$$caLIB,"caIndSUB",0,@%caIN1@(%caS1),@%caIN2@(%caS2))
+ .i %caZ'="" s @%caOUT@(%caS1)=%caZ
+ .s %caS1=$o(@%caIN1@(%caS1)),%caS2=$o(@%caIN2@(%caS2))
+ q
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",SUB2,"
+caIndSUB2(%caINOUT1,%caIN2) 
+ n %caS1,%caS2,%caZ
+ s %caS1=$o(@%caINOUT1@("")),%caS2=$o(@%caIN2@("")) f  q:%caS1=""!(%caS2="")  d
+ .i %caS1<%caS2 s %caS1=$o(@%caINOUT1@(%caS1)) q
+ .i %caS2<%caS1 s %caS2=$o(@%caIN2@(%caS2)) q
+ .s %caZ=$zf(-3,$$$caLIB,"caIndSUB",0,@%caINOUT1@(%caS1),@%caIN2@(%caS2))
+ .i %caZ'="" s @%caINOUT1@(%caS1)=%caZ
+ .e  k @%caINOUT1@(%caS1)
+ .s %caS1=$o(@%caINOUT1@(%caS1)),%caS2=$o(@%caIN2@(%caS2))
+ q
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",INSERT,"
+caIndInsert(%caINOUT,%caREC) 
+ n %caS
+ s %caS=%caREC\65536,@%caINOUT@(%caS)=$zf(-3,$$$caLIB,"caIndInsert",0,$g(@%caINOUT@(%caS)),%caREC)
+ q
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",DELETE,"
+caIndDelete(%caINOUT,%caREC) 
+ n %caS,%caZ
+ s %caS=%caREC\65536,%caZ=$zf(-3,$$$caLIB,"caIndDelete",0,$g(@%caINOUT@(%caS)),%caREC)
+ i %caZ'="" s @%caINOUT@(%caS)=%caZ
+ e  k @%caINOUT@(%caS)
+ q
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",MEMBER,"
+caIndMember(%caIN,%caREC) 
+ q $zf(-3,$$$caLIB,"caIndMember",0,$g(@%caIN@(%caREC\65536)),%caREC)
+ #endif
+  
+ #if ","_$$$caIndFunc_","[",GETRECS,"
+caIndGetRecs(%caIN,%caFROM,%caNUM) 
+ n %caS,%caR,%caZ
+ q:%caNUM'>0 ""
+ s:%caNUM>2048 %caNUM=2048
+ s %caR="",%caS="" f  s %caS=$o(@%caIN@(%caS)) q:%caS=""  d  q:'%caNUM
+ .i %caFROM>0 s %caZ=$zf(-3,$$$caLIB,"caIndCount",0,@%caIN@(%caS)) i %caZ'>%caFROM s %caFROM=%caFROM-%caZ q
+ .s %caZ=$zf(-3,$$$caLIB,"caIndGetRecs",0,@%caIN@(%caS),%caS,%caFROM,%caNUM),%caFROM=0
+ .s %caR=%caR_%caZ,%caNUM=%caNUM-($l(%caZ)\4)
+ q %caR
+ #endif
+ 
+ #if ","_$$$caIndFunc_","[",GETRECNUM,"
+caIndGetNum(%caIN,%caID) 
+ n %caS,%caR,%caZ,%caN,%caI,%caJ,%caF
+ s %caN=%caID\65536
+ i '$zf(-3,$$$caLIB,"caIndMember",0,$g(@%caIN@(%caN)),%caID) q -1        
+ s %caR=0,%caS="" f  s %caS=$o(@%caIN@(%caS)) q:%caS=""  q:%caS=%caN  d
+ .s %caR=%caR+$zf(-3,$$$caLIB,"caIndCount",0,@%caIN@(%caS))
+ s %caI=0,%caF=0 
+ f  s %caZ=$zf(-3,$$$caLIB,"caIndGetRecs",0,@%caIN@(%caN),%caN,%caI,2048) q:%caZ=""  d  q:%caF  s %caI=%caI+($l(%caZ)\4),%caR=%caR+($l(%caZ)\4)
+ .f %caJ=1:4:$l(%caZ) i $zla(%caZ,%caJ)=%caID s %caF=1 q
+ s %caR=%caR+((%caJ-1)\4)
+ q %caR
+ #endif
+
+
+

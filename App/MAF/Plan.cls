@@ -1,5 +1,5 @@
 /// План (набор метрик) сравнения строк
-Class App.MAF.Plan Extends %Persistent
+Class App.MAF.Plan Extends (%Persistent, Lib.Abstract.StorableTables)
 {
 
 Parameter XMLTYPE = "App-MAF-Plan";
@@ -11,59 +11,6 @@ ClassMethod Init()
 	s plan = ..%New()
 	s plan.Name = "Default"
 	d plan.%Save()
-}
-
-/// Обработка ошибки
-ClassMethod ErrorDetect(ByRef exp) As %String
-{
-	s err=""
-	if exp.Code'=999{
-		d exp.Log()
-		if exp.Name["<PROTECT>" {s err="У пользователя "_$USERNAME_" нет прав на создание, изменение, удаление данных."}
-		elseif exp.%IsA("%Exception.SystemException") {s err="Ошибка : "_$ZCVT(exp.Name,"O","HTML")_". Адрес : "_exp.Location_". Код : "}
-		elseif exp.%IsA("%Exception.SQL") {s err="Ошибка SQL. Код : "}
-		elseif exp.%IsA("%Exception.StatusException") {s err="Статус : "_$SYSTEM.Status.DisplayError($SYSTEM.Status.Error(exp.Code,exp.Data)) return}
-		elseif exp.%IsA("%Exception.General") {s err="Глобальная ошибка : "_$ZCVT(exp.Name,"O","HTML")_". Код : "}
-		else {s err="Неизвестная ошибка." return}
-		//s st=$STACK($ST,"PLACE")
-		//s st="" for i=0:1:$STACK(-1) {s st=st_$STACK(i,"PLACE")_", "}
-		s:exp.Name'["<PROTECT>" err=err_exp.Code_". Строка : "_exp.Data //_". Стек : <br>"_st
-	}
-	else{s err=exp.Data}
-	q err
-}
-
-/// d ##class(App.MAF.Plan).PrintResults(1,arr,0.1,84)
-ClassMethod PrintResults(planId, numScore, predictions, cm)
-{
-	try {
-		s status = $$$OK
-		s query = 	"SELECT ID FROM App_MAF.LinkML ORDER BY ID"
-		s statement	= ##class(%SQL.Statement).%New()
-		s statement.%SelectMode = 1
-		s status = statement.%Prepare(query) q:$$$ISERR(status)
-		s resultSet = statement.%Execute() q:$$$ISERR(status)
-		s predictions = [].%FromJSON(predictions)
-		
-		s predictionNum = 0
-		while resultSet.%Next() {
-			s linkId = resultSet.%Get("ID")
-			s link = ##Class(App.MAF.LinkML).%OpenId(linkId)
-			s prediction = predictions.%Get(predictionNum)
-			s link.LinkedLogReg = prediction
-			s st = link.%Save()
-			i $I(predictionNum)
-		}
-		s ^kam($I(^kam), "planId") 		= planId
-		s ^kam($I(^kam), "numScore") 	= numScore
-		s ^kam($I(^kam), "cm") 			= cm
-		
-	}
-	catch exp {
-		s err = ..ErrorDetect(.exp)
-		s ^kam($I(^kam), "err") = err
-	}
-	q status
 }
 
 /// d ##class(App.MAF.Plan).UpdateMetricsWeights(1,arr,0.1,84)
@@ -87,7 +34,7 @@ ClassMethod UpdateMetricsWeights(planId, arrCoef, numIntercept, numScore)
 					"	link.Order AS Ord "_
 					"FROM App_MAF.Plan plan "_
 					"LEFT JOIN app_maf.PlanMetric link ON plan.id = link.plan "_
-					"RIGHT JOIN app_maf.Metric m ON link.Metric = m.id "_
+					"LEFT JOIN app_maf.Metric m ON link.Metric = m.id "_
 					"WHERE plan.id = "_planId_
 					" AND link.active = 1 "_
 					" ORDER BY Ord"
@@ -112,7 +59,6 @@ ClassMethod UpdateMetricsWeights(planId, arrCoef, numIntercept, numScore)
 			s:metric.Name="Simber" weight=arrCoef.%Get(7)
 			s:metric.Name="Translit" weight=arrCoef.%Get(8)
 			s:metric.Name="Trigram" weight=arrCoef.%Get(9)
-			s:metric.Name="BarcodeSimilarity" weight=arrCoef.%Get(10) 
 			s weight = weight/100
 			
 			s link.Weight = weight
@@ -177,18 +123,27 @@ Storage Default
 <Value>%%CLASSNAME</Value>
 </Value>
 <Value name="2">
-<Value>Description</Value>
-</Value>
-<Value name="3">
-<Value>Intercept</Value>
-</Value>
-<Value name="4">
-<Value>MinCoef</Value>
-</Value>
-<Value name="5">
 <Value>Name</Value>
 </Value>
+<Value name="3">
+<Value>Vers</Value>
+</Value>
+<Value name="4">
+<Value>SourceSys</Value>
+</Value>
+<Value name="5">
+<Value>GUID</Value>
+</Value>
 <Value name="6">
+<Value>Description</Value>
+</Value>
+<Value name="7">
+<Value>MinCoef</Value>
+</Value>
+<Value name="8">
+<Value>Intercept</Value>
+</Value>
+<Value name="9">
 <Value>Score</Value>
 </Value>
 </Data>
@@ -201,21 +156,32 @@ Storage Default
 }
 
 /// Описание
-Property Description As %Library.String(MAXLEN = 30000);
+Property Description As Lib.DataTypes.String(MAXLEN = 30000);
 
 /// Интерсепт
-Property Intercept As %Library.Double;
+Property Intercept As Lib.DataTypes.Double;
 
 /// Минимальный коэффициент для автоматического связывания
-Property MinCoef As %Library.Double;
+Property MinCoef As Lib.DataTypes.Double;
 
 /// Наименование 
-Property Name As %Library.String(MAXLEN = 1024);
+Property Name As Lib.DataTypes.String(IndexValue = 1, MAXLEN = 1024);
 
 /// Точность модели
-Property Score As %Library.Double;
+Property Score As Lib.DataTypes.Double;
+
+Index GUID On GUID As Truncate(200) [ Type = bitmap ];
 
 Index Name On Name As Truncate(200) [ Type = bitmap ];
+
+/// Может Быть родителем
+Parameter CanParent = 1;
+
+/// Сохранение связанных объектов
+Parameter Related = 1;
+
+/// Виртуальный
+Parameter Virtual = 0;
 
 }
 
